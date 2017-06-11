@@ -1,7 +1,6 @@
 import os,sys
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import numpy as np 
-import cv2
 import tensorflow as tf 
 import skimage
 import skimage.io

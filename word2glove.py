@@ -2,17 +2,13 @@ import os,sys
 import numpy as np
 import tensorflow as tf 
 import data_loader as dl
-import cv2
 import pickle
 import skimage
 import skimage.io
 import skimage.transform
 from itertools import cycle
-import word2glove as w2g 
 from tensorflow.contrib import rnn
 import matplotlib.pyplot as plt
-import pylab
-import Image
 
 def build_glove_dict(datapath, dest_file):
 

@@ -2,7 +2,6 @@ import os,sys
 import numpy as np
 import tensorflow as tf 
 import data_loader as dl
-import cv2
 import pickle
 import skimage
 import skimage.io
@@ -10,10 +9,6 @@ import skimage.transform
 from itertools import cycle
 import word2glove as w2g 
 from tensorflow.contrib import rnn
-import matplotlib.pyplot as plt
-import pylab
-import Image
-
 
 def model(sess, batch_size):
 
@@ -61,24 +56,24 @@ def model(sess, batch_size):
         reduced_image_feature = tf.reshape(red_img_activ, shape=[-1, 1568])
         variable_summaries(red_img_w)
 
-    # with tf.variable_scope('Image') as scope:
-    #     img_w = tf.Variable(tf.random_normal([1,1,512,8]), name="weight") # 64-->8
-    #     img_b = tf.Variable(tf.random_normal([8]), name="bias") # 64 --> 8
-    #     img_conv = tf.nn.conv2d(image_feature, img_w, strides=[1,1,1,1], padding='SAME')
-    #     img_activ = tf.nn.relu(img_conv + img_b, name="activation")
-    #     image_feature = tf.reshape(img_activ, shape=[-1, 1568])
-    #     variable_summaries(img_w)
+    with tf.variable_scope('Image') as scope:
+        img_w = tf.Variable(tf.random_normal([1,1,512,8]), name="weight") # 64-->8
+        img_b = tf.Variable(tf.random_normal([8]), name="bias") # 64 --> 8
+        img_conv = tf.nn.conv2d(image_feature, img_w, strides=[1,1,1,1], padding='SAME')
+        img_activ = tf.nn.relu(img_conv + img_b, name="activation")
+        image_feature = tf.reshape(img_activ, shape=[-1, 1568])
+        variable_summaries(img_w)
 
     
     # Combine all three features to build dense layer
     with tf.variable_scope('Dense') as scope:
-    	# with tf.variable_scope('question') as scope:
-     #    	sem_dense_w = tf.Variable(tf.random_normal([128, 1000]), name="q_weight")
-     #    	variable_summaries(sem_dense_w)
+    	with tf.variable_scope('question') as scope:
+        	sem_dense_w = tf.Variable(tf.random_normal([512, 1000]), name="q_weight")
+        	variable_summaries(sem_dense_w)
 
-     #    with tf.variable_scope('image') as scope:
-     #    	img_dense_w = tf.Variable(tf.random_normal([1568, 1000]), name="i_weight") 
-     #    	variable_summaries(img_dense_w)
+        with tf.variable_scope('image') as scope:
+        	img_dense_w = tf.Variable(tf.random_normal([1568, 1000]), name="i_weight") 
+        	variable_summaries(img_dense_w)
 
         with tf.variable_scope('attention') as scope:
         	reduced_img_dense_w = tf.Variable(tf.random_normal([1568, 1000]), name="ri_weight") 
@@ -88,10 +83,10 @@ def model(sess, batch_size):
         	dense_b = tf.Variable(tf.random_normal([1000]), name="ans_bias")
         	variable_summaries(dense_b)
     
-        dense = tf.matmul(reduced_image_feature, reduced_img_dense_w) + \
-                dense_b
-        		# tf.matmul(ques_sem, sem_dense_w) + \
-                # tf.matmul(image_feature, img_dense_w) + \
+        dense = tf.matmul(ques_sem, sem_dense_w) + \
+                tf.matmul(reduced_image_feature, reduced_img_dense_w) + \
+                tf.matmul(image_feature, img_dense_w) + \
+		dense_b
                 
     # Apply softmax on dense layer to get answers
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=dense, labels=ans)
