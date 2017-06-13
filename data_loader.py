@@ -145,7 +145,6 @@ def make_answer_vocab(answers):
 	answer_vocab['UNK'] = top_n - 1
 	return answer_vocab
 
-
 def make_questions_vocab(questions, answers, answer_vocab):
 	word_regex = re.compile(r'\w+')
 	question_frequency = {}

@@ -96,6 +96,6 @@ def train():
 
 if __name__ == '__main__':
 	warnings.filterwarnings("ignore")
-	# preprocess_question()
+	preprocess_question()
 	train()
 	

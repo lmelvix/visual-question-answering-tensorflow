@@ -42,6 +42,10 @@ def get_batch(sess, vqa, batch_size, mode='training'):
         if w2g.is_missing_encoding(vqa_ques, missing_pkl) == True:
             continue
 
+        # Filter non-YES/NO/2 answers to avoid skew
+        if vqa_ans < 3:
+        	continue
+        	
         # Get image and build batch
         img = dl.getImage(img_datapath, vqa_id, purpose)
         if( len(img.shape) < 3 or img.shape[2] < 3 ):
