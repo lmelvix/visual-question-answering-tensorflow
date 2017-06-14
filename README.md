@@ -1,4 +1,4 @@
-# Visual Question Answering using Stacked Attention Networks
+# Stacked Attention Network for VQA
 
 ## Dependencies
 1. Tensorflow
